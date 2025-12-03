@@ -1,0 +1,958 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5,user-scalable=yes" />
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="OracleAgent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="OracleAgent">
+  <title>OracleAgent — OracleFusion Access</title>
+  <meta name="description" content="OracleAgent — quick access wrapper for OracleFusion. Developer: Subash Weerasinghe."/>
+  
+  <!-- Median.co compatible manifest -->
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- App Icons for Median -->
+  <link rel="icon" type="image/png" sizes="192x192" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' fill='%233b82f6' rx='40'/%3E%3Ctext x='96' y='130' font-size='90' text-anchor='middle' fill='white' font-weight='900'%3EOA%3C/text%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' fill='%233b82f6' rx='40'/%3E%3Ctext x='96' y='130' font-size='90' text-anchor='middle' fill='white' font-weight='900'%3EOA%3C/text%3E%3C/svg%3E">
+
+  <style>
+    :root{
+      --bg: #f8fafc;
+      --bg-secondary: #ffffff;
+      --card: #ffffff;
+      --text: #0f172a;
+      --text-secondary: #64748b;
+      --text-muted: #94a3b8;
+      --accent: #3b82f6;
+      --accent-dark: #2563eb;
+      --accent-light: #dbeafe;
+      --border: #e2e8f0;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.12);
+      --success: #10b981;
+      --red: #dc2626;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.6;
+      overflow-x: hidden;
+      touch-action: pan-x pan-y pinch-zoom;
+    }
+
+    /* Splash Screen */
+    .splash {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      opacity: 1;
+      transition: opacity 0.6s ease;
+    }
+    .splash.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .splash-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+      animation: splashZoom 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .splash-branding {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .splash-logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      font-weight: 900;
+      color: white;
+      letter-spacing: 2px;
+      box-shadow: 0 20px 60px rgba(59, 130, 246, 0.25);
+    }
+    .splash-text {
+      text-align: left;
+    }
+    .splash-title {
+      font-size: 42px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -1px;
+      line-height: 1.1;
+    }
+    .splash-subtitle {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+    .splash-loader {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .splash-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: dotPulse 1.4s infinite ease-in-out;
+    }
+    .splash-dot:nth-child(2) { animation-delay: 0.2s; }
+    .splash-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes splashZoom {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes dotPulse {
+      0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+      40% { opacity: 1; transform: scale(1); }
+    }
+
+    /* App Shell */
+    .app {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      opacity: 0;
+      animation: appFadeIn 0.6s 0.4s forwards;
+    }
+    @keyframes appFadeIn {
+      to { opacity: 1; }
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 20px 32px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .logo-mas {
+      height: 48px;
+      width: auto;
+      flex-shrink: 0;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05));
+    }
+    .brand-text h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+    .brand-text p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .dev-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      background: var(--bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .dev-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #000;
+      flex-shrink: 0;
+    }
+    .dev-info p {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+    .dev-info strong {
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* Main Content */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    }
+
+    .hero-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 56px 48px;
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.3s ease;
+    }
+    .hero-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    }
+
+    .hero-icon {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 32px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25);
+      transition: all 0.3s ease;
+    }
+    .hero-card:hover .hero-icon {
+      transform: scale(1.05);
+      box-shadow: 0 12px 32px rgba(59, 130, 246, 0.35);
+    }
+
+    .hero-card h2 {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: var(--text);
+      letter-spacing: -0.8px;
+    }
+
+    .hero-card p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 36px;
+      line-height: 1.7;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Button */
+    .enter-btn {
+      position: relative;
+      padding: 18px 48px;
+      font-size: 18px;
+      border-radius: 14px;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+      letter-spacing: 0.5px;
+    }
+    .enter-btn:hover {
+      background: var(--accent-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+    }
+    .enter-btn:active {
+      transform: translateY(0) scale(0.98);
+    }
+    .enter-btn.pulse::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 16px;
+      background: var(--accent);
+      opacity: 0;
+      animation: btnPulse 2.5s infinite;
+      z-index: -1;
+    }
+    @keyframes btnPulse {
+      0%, 100% { opacity: 0; transform: scale(1); }
+      50% { opacity: 0.2; transform: scale(1.1); }
+    }
+    .enter-btn.loading {
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    /* Features */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 40px;
+    }
+    .feature {
+      padding: 20px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      transition: all 0.3s ease;
+      cursor: default;
+    }
+    .feature:hover {
+      background: var(--bg-secondary);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+    .feature-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .feature h3 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--text);
+      letter-spacing: -0.2px;
+    }
+    .feature p {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    /* Footer */
+    footer {
+      padding: 24px 32px;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+    }
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .copyright {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .footer-links span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Status Indicator */
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #166534;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      animation: statusPulse 2s infinite;
+    }
+    @keyframes statusPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Responsive */
+          @media (max-width: 768px) {
+      header {
+        padding: 16px 20px;
+      }
+      .logo-mas {
+        height: 40px;
+      }
+      .brand-text h1 {
+        font-size: 18px;
+      }
+      .brand-text p {
+        font-size: 11px;
+      }
+      .dev-badge {
+        padding: 6px 10px;
+      }
+      .dev-logo {
+        width: 28px;
+        height: 28px;
+      }
+      .dev-info p {
+        font-size: 9px;
+      }
+      .dev-info strong {
+        font-size: 11px;
+      }
+      main {
+        padding: 32px 20px;
+      }
+      .hero-card {
+        padding: 40px 28px;
+      }
+      .hero-card h2 {
+        font-size: 26px;
+      }
+      .hero-card p {
+        font-size: 15px;
+      }
+      .hero-icon {
+        width: 80px;
+        height: 80px;
+        font-size: 40px;
+      }
+      .enter-btn {
+        padding: 16px 40px;
+        font-size: 16px;
+      }
+      .features {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .footer-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+      }
+      .splash-branding {
+        flex-direction: column;
+        gap: 16px;
+      }
+      .splash-text {
+        text-align: center;
+      }
+      .splash-title {
+        font-size: 32px;
+      }
+      .splash-subtitle {
+        font-size: 14px;
+      }
+      .splash-logo {
+        width: 70px;
+        height: 70px;
+        font-size: 30px;
+      }
+      .exit-modal-content {
+        padding: 28px 24px;
+      }
+      .exit-modal h3 {
+        font-size: 20px;
+      }
+      .exit-modal p {
+        font-size: 14px;
+      }
+      .exit-modal-buttons {
+        flex-direction: column;
+      }
+      .exit-modal-btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header {
+        padding: 12px 16px;
+      }
+      main {
+        padding: 24px 16px;
+      }
+      .hero-card {
+        padding: 32px 24px;
+      }
+      footer {
+        padding: 20px 16px;
+      }
+    }
+
+    /* Exit Confirmation Modal */
+    .exit-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 10001;
+      animation: fadeIn 0.2s ease;
+    }
+    .exit-modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .exit-modal-content {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 32px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: var(--shadow-lg);
+      animation: modalSlideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-align: center;
+    }
+    .exit-modal-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+    }
+    .exit-modal h3 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+    .exit-modal p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+    .exit-modal-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    .exit-modal-btn {
+      padding: 12px 28px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      touch-action: manipulation;
+    }
+    .exit-modal-btn-cancel {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .exit-modal-btn-cancel:hover {
+      background: var(--card);
+      border-color: var(--accent);
+    }
+    .exit-modal-btn-exit {
+      background: var(--red);
+      color: white;
+    }
+    .exit-modal-btn-exit:hover {
+      background: #b91c1c;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes modalSlideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .install-prompt {
+      display: none;
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 20px 24px;
+      border-radius: 16px;
+      box-shadow: var(--shadow-lg);
+      z-index: 1000;
+      max-width: 90%;
+      text-align: center;
+    }
+    .install-prompt.show {
+      display: block;
+      animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes slideUp {
+      from { transform: translateX(-50%) translateY(100px); opacity: 0; }
+      to { transform: translateX(-50%) translateY(0); opacity: 1; }
+    }
+    .install-btn {
+      margin-top: 12px;
+      padding: 10px 24px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+    .install-btn:hover {
+      background: var(--accent-dark);
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+  <!-- Splash Screen -->
+  <div class="splash" id="splash">
+    <div class="splash-content">
+      <div class="splash-branding">
+        <div class="splash-logo">OA</div>
+        <div class="splash-text">
+          <div class="splash-title">OracleAgent</div>
+          <div class="splash-subtitle">Secure ERP Access Portal</div>
+        </div>
+      </div>
+      <div class="splash-loader">
+        <div class="splash-dot"></div>
+        <div class="splash-dot"></div>
+        <div class="splash-dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="app">
+    <header>
+      <div class="brand">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60'%3E%3Cpolygon points='10,50 20,10 30,50 27,50 20,20 13,50' fill='%23dc2626'/%3E%3Cpolygon points='30,10 40,50 50,10 47,10 40,40 33,10' fill='%23dc2626'/%3E%3Cpolygon points='50,50 60,10 70,50 67,50 60,20 53,50' fill='%23dc2626'/%3E%3Ctext x='82' y='35' font-family='Arial' font-size='28' font-weight='bold' fill='%2364748b'%3EMAS%3C/text%3E%3Ctext x='82' y='52' font-family='Arial' font-size='9' fill='%2394a3b8'%3ECHANGE IS COURAGE%3C/text%3E%3C/svg%3E" alt="MAS Holdings" class="logo-mas" />
+        <div class="brand-text">
+          <h1>OracleAgent</h1>
+          <p>Secure Gateway to OracleFusion ERP</p>
+        </div>
+      </div>
+      
+      <div class="dev-badge">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23000'/%3E%3Ctext x='50' y='70' font-family='cursive' font-size='45' font-weight='bold' text-anchor='middle' fill='%23fff'%3ESW%3C/text%3E%3C/svg%3E" alt="SW" class="dev-logo" />
+        <div class="dev-info">
+          <p>Developed by</p>
+          <strong>Subash Weerasinghe</strong>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="hero-card">
+        <div class="hero-icon">🏢</div>
+        
+        <h2>Welcome to OracleAgent</h2>
+        <p>Your streamlined and secure portal for accessing MAS Holdings' OracleFusion ERP system. Fast, reliable, and professional access at your fingertips.</p>
+        
+        <button id="openBtn" class="enter-btn pulse" aria-label="Launch OracleFusion">
+          Launch OracleFusion →
+        </button>
+
+        <div class="features">
+          <div class="feature">
+            <span class="feature-icon">🔒</span>
+            <h3>Secure Access</h3>
+            <p>Enterprise-grade security</p>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">⚡</span>
+            <h3>Fast Connection</h3>
+            <p>Instant direct access</p>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">📱</span>
+            <h3>Mobile Ready</h3>
+            <p>Access from anywhere</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="copyright">
+          © <span id="year"></span> OracleAgent by Subash Weerasinghe<br>
+          OracleFusion Database © Oracle International, Inc. • Unauthorized access prohibited
+        </div>
+        <div class="footer-links">
+          <span>🔐 Secure</span>
+          <span>⚡ Fast</span>
+          <span>💼 Professional</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <div class="install-prompt" id="installPrompt">
+    <p style="margin:0 0 4px;font-weight:700;font-size:15px;color:var(--text)">Install OracleAgent</p>
+    <p style="margin:0;font-size:13px;color:var(--text-secondary)">Add to home screen for quick access</p>
+    <button onclick="hideInstallPrompt()" class="install-btn">Install App</button>
+  </div>
+
+  <!-- Exit Confirmation Modal -->
+  <div class="exit-modal" id="exitModal">
+    <div class="exit-modal-content">
+      <div class="exit-modal-icon">⚠️</div>
+      <h3>Exit OracleAgent?</h3>
+      <p>Are you sure you want to exit the application?</p>
+      <div class="exit-modal-buttons">
+        <button class="exit-modal-btn exit-modal-btn-cancel" onclick="cancelExit()">No, Stay</button>
+        <button class="exit-modal-btn exit-modal-btn-exit" onclick="confirmExit()">Yes, Exit</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const targetUrl = 'https://egmh.login.us6.oraclecloud.com';
+    const openBtn = document.getElementById('openBtn');
+    const yearSpan = document.getElementById('year');
+
+    if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+
+    // Splash screen
+    setTimeout(() => {
+      const splash = document.getElementById('splash');
+      if (splash) {
+        splash.classList.add('hide');
+        setTimeout(() => {
+          splash.style.display = 'none';
+        }, 600);
+      }
+    }, 3000);
+
+    // Navigation handler and exit confirmation
+    let isNavigatingToOracle = false;
+    let exitModalShown = false;
+
+    function openOracle() {
+      isNavigatingToOracle = true;
+      openBtn.classList.add('loading');
+      openBtn.textContent = 'Redirecting...';
+      openBtn.classList.remove('pulse');
+      setTimeout(() => {
+        window.location.href = targetUrl;
+      }, 300);
+    }
+
+    if (openBtn) {
+      openBtn.addEventListener('click', openOracle);
+    }
+
+    // Exit confirmation modal functions
+    function showExitModal() {
+      const modal = document.getElementById('exitModal');
+      if (modal) {
+        modal.classList.add('show');
+        exitModalShown = true;
+      }
+    }
+
+    function cancelExit() {
+      const modal = document.getElementById('exitModal');
+      if (modal) {
+        modal.classList.remove('show');
+        exitModalShown = false;
+      }
+    }
+
+    function confirmExit() {
+      // For Median.co APK - use their native bridge
+      if (typeof gonative !== 'undefined' && gonative.nativebridge) {
+        gonative.nativebridge.custom({
+          command: 'exit'
+        });
+      }
+      // For standard WebView with Android interface
+      else if (window.Android && window.Android.exitApp) {
+        window.Android.exitApp();
+      }
+      // For browser
+      else if (window.close) {
+        window.close();
+      }
+      // Fallback
+      else {
+        window.location.href = 'about:blank';
+      }
+    }
+
+    // Median.co specific: Handle hardware back button
+    document.addEventListener('gonative.native.backbutton', function(e) {
+      e.preventDefault();
+      if (!exitModalShown) {
+        showExitModal();
+      }
+    });
+
+    // Handle browser back button (for testing in browser)
+    window.history.pushState(null, '', window.location.href);
+    window.addEventListener('popstate', () => {
+      if (!isNavigatingToOracle) {
+        window.history.pushState(null, '', window.location.href);
+        showExitModal();
+      }
+    });
+
+    // Handle beforeunload (browser tab close)
+    window.addEventListener('beforeunload', (e) => {
+      if (!isNavigatingToOracle && !document.referrer.includes('oraclecloud.com')) {
+        const message = 'Are you sure you want to exit OracleAgent?';
+        e.returnValue = message;
+        return message;
+      }
+    });
+
+    // PWA Install
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      setTimeout(() => {
+        const installPrompt = document.getElementById('installPrompt');
+        if (installPrompt) installPrompt.classList.add('show');
+      }, 5000);
+    });
+
+    function hideInstallPrompt() {
+      const installPrompt = document.getElementById('installPrompt');
+      if (installPrompt) installPrompt.classList.remove('show');
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => {
+          deferredPrompt = null;
+        });
+      }
+    }
+
+    // Pinch zoom support
+    let scale = 1;
+    let lastDistance = 0;
+
+    document.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 2) {
+        lastDistance = getDistance(e.touches[0], e.touches[1]);
+      }
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 2) {
+        const distance = getDistance(e.touches[0], e.touches[1]);
+        if (lastDistance > 0) {
+          const delta = distance - lastDistance;
+          scale += delta * 0.01;
+          scale = Math.max(1, Math.min(scale, 3));
+        }
+        lastDistance = distance;
+      }
+    }, { passive: true });
+
+    document.addEventListener('touchend', () => {
+      lastDistance = 0;
+    }, { passive: true });
+
+    function getDistance(touch1, touch2) {
+      const dx = touch1.clientX - touch2.clientX;
+      const dy = touch1.clientY - touch2.clientY;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    // Daily notification
+    function scheduleDailyNotification() {
+      if (!('Notification' in window)) return;
+      
+      Notification.requestPermission().then(permission => {
+        if (permission !== 'granted') return;
+        
+        try {
+          new Notification('OracleAgent Reminder', {
+            body: 'Don\'t forget to check your attendance today!',
+            icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="50" fill="%233b82f6"/%3E%3Ctext x="50" y="65" font-size="40" text-anchor="middle" fill="white" font-weight="bold"%3EOA%3C/text%3E%3C/svg%3E'
+          });
+        } catch (e) {
+          console.log('Notification:', e);
+        }
+
+        if (window._notifInterval) clearInterval(window._notifInterval);
+        window._notifInterval = setInterval(() => {
+          try {
+            new Notification('OracleAgent Reminder', {
+              body: 'Don\'t forget to check your attendance today!'
+            });
+          } catch (e) {}
+        }, 24 * 60 * 60 * 1000);
+      });
+    }
+
+    document.addEventListener('click', () => {
+      scheduleDailyNotification();
+    }, { once: true });
+
+    // Prevent double-tap zoom
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', (e) => {
+      const now = Date.now();
+      if (now - lastTouchEnd <= 300) {
+        e.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, { passive: false });
+  </script>
+</body>
+</html>
