@@ -1,855 +1,366 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#C74634">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="Secure Oracle Fusion Applications Gateway">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://egmh.login.us6.oraclecloud.com; style-src 'unsafe-inline'; script-src 'unsafe-inline';">
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIk9yYWNsZSBBZ2VudCIsCiAgInNob3J0X25hbWUiOiAiT3JhY2xlIiwKICAic3RhcnRfdXJsIjogIi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiNDNzQ2MzQiLAogICJ0aGVtZV9jb2xvciI6ICIjQzc0NjM0IiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTVRJNElpQm9aV2xuYUhROUlqRXlPQ0lnZG1sbGQwSnZlRDBpTUNBd0lERXlPQ0F4TWpnaUlIaHRiRzV6UFNKb2RIUndPaTh2ZDNkM0xuY3pMbTl5Wnk4eU1EQXdMM04yWnlJK1BHTnBjbU5zWlNCamVEMGlOalFpSUdONVBTSTJOQ0lnY2owaU5EQWlJR1pwYkd3OUlpTkRORFEyTXpRaUx6NDhMMk4yWnoxIiwKICAgICAgInNpemVzIjogIjEyOHgxMjgiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfQogIF0KfQ==">
-    <title>Oracle Agent - Fusion Apps Gateway</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        :root {
-            --oracle-red: #C74634;
-            --oracle-dark: #312D2A;
-            --oracle-gray: #7C7C7C;
-            --oracle-light: #F6F6F6;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.15);
-            --shadow-lg: 0 8px 32px rgba(0,0,0,0.2);
-        }
-
-        html {
-            -webkit-text-size-adjust: 100%;
-            -ms-text-size-adjust: 100%;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: env(safe-area-inset-top, 20px) env(safe-area-inset-right, 20px) env(safe-area-inset-bottom, 20px) env(safe-area-inset-left, 20px);
-            position: relative;
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .animated-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            opacity: 0.3;
-            pointer-events: none;
-            will-change: transform;
-        }
-
-        .circle {
-            position: absolute;
-            border-radius: 50%;
-            background: white;
-            animation: float 15s infinite ease-in-out;
-            will-change: transform;
-        }
-
-        .circle:nth-child(1) {
-            width: 80px;
-            height: 80px;
-            top: 10%;
-            left: 10%;
-            animation-delay: 0s;
-        }
-
-        .circle:nth-child(2) {
-            width: 60px;
-            height: 60px;
-            top: 70%;
-            left: 80%;
-            animation-delay: 2s;
-        }
-
-        .circle:nth-child(3) {
-            width: 100px;
-            height: 100px;
-            top: 40%;
-            left: 70%;
-            animation-delay: 4s;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 0.3;
-            }
-            50% {
-                transform: translateY(-30px) rotate(180deg);
-                opacity: 0.6;
-            }
-        }
-
-        .container {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            max-width: 480px;
-            background: white;
-            border-radius: 24px;
-            box-shadow: var(--shadow-lg);
-            overflow: hidden;
-            animation: slideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .header {
-            background: linear-gradient(135deg, var(--oracle-red) 0%, #a83a2a 100%);
-            padding: 40px 30px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: rotate 20s linear infinite;
-            will-change: transform;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .logo-container {
-            position: relative;
-            z-index: 1;
-            margin-bottom: 20px;
-        }
-
-        .logo {
-            width: 80px;
-            height: 80px;
-            background: white;
-            border-radius: 20px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
-            font-weight: bold;
-            color: var(--oracle-red);
-            box-shadow: var(--shadow-md);
-            animation: pulse 2s ease-in-out infinite;
-            will-change: transform;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .header h1 {
-            position: relative;
-            z-index: 1;
-            color: white;
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .header p {
-            position: relative;
-            z-index: 1;
-            color: rgba(255,255,255,0.9);
-            font-size: 14px;
-        }
-
-        .content {
-            padding: 40px 30px;
-        }
-
-        .info-cards {
-            display: grid;
-            gap: 12px;
-            margin-bottom: 25px;
-        }
-
-        .info-card {
-            background: var(--oracle-light);
-            padding: 18px;
-            border-radius: 16px;
-            border-left: 4px solid var(--oracle-red);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .info-card:active {
-            transform: scale(0.98);
-        }
-
-        .info-card:hover {
-            transform: translateX(5px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .info-card-title {
-            font-size: 13px;
-            color: var(--oracle-gray);
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .info-card-value {
-            font-size: 16px;
-            color: var(--oracle-dark);
-            font-weight: 600;
-        }
-
-        .status-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            background: #d4edda;
-            color: #155724;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: #28a745;
-            border-radius: 50%;
-            animation: blink 2s ease-in-out infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        .session-info {
-            background: #fff3cd;
-            color: #856404;
-            padding: 12px 16px;
-            border-radius: 12px;
-            font-size: 12px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, var(--oracle-red) 0%, #a83a2a 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-sm);
-            position: relative;
-            overflow: hidden;
-            touch-action: manipulation;
-            user-select: none;
-        }
-
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.2);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .btn-primary:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0) scale(0.98);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .btn-text {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .features {
-            margin-top: 25px;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-
-        .feature {
-            text-align: center;
-            padding: 18px 10px;
-            background: var(--oracle-light);
-            border-radius: 12px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .feature:active {
-            transform: scale(0.95);
-        }
-
-        .feature:hover {
-            background: #e8e8e8;
-            transform: translateY(-3px);
-        }
-
-        .feature-icon {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-
-        .feature-text {
-            font-size: 13px;
-            color: var(--oracle-dark);
-            font-weight: 500;
-        }
-
-        .footer {
-            padding: 25px 30px;
-            background: var(--oracle-light);
-            text-align: center;
-            border-top: 1px solid #e0e0e0;
-        }
-
-        .footer-text {
-            font-size: 11px;
-            color: var(--oracle-gray);
-            margin-bottom: 8px;
-        }
-
-        .developer {
-            font-size: 12px;
-            color: var(--oracle-dark);
-            font-weight: 600;
-        }
-
-        .quick-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-
-        .quick-link {
-            color: var(--oracle-red);
-            text-decoration: none;
-            font-size: 12px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .quick-link:hover {
-            text-decoration: underline;
-        }
-
-        .quick-link:active {
-            opacity: 0.7;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--oracle-dark);
-            color: white;
-            padding: 16px 24px;
-            border-radius: 12px;
-            box-shadow: var(--shadow-lg);
-            transition: bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 1000;
-            font-size: 14px;
-            max-width: 90%;
-            text-align: center;
-        }
-
-        .toast.show {
-            bottom: 30px;
-        }
-
-        .loading {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .btn-primary.loading .btn-text span {
-            display: none;
-        }
-
-        .btn-primary.loading .loading {
-            display: block;
-        }
-
-        .security-badge {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 10px;
-            background: rgba(40, 167, 69, 0.1);
-            border-radius: 10px;
-            margin-top: 20px;
-            font-size: 12px;
-            color: #155724;
-        }
-
-        .offline-indicator {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: none;
-            text-align: center;
-            font-size: 13px;
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                border-radius: 16px;
-                max-width: 100%;
-                margin: 10px;
-            }
-
-            .header {
-                padding: 30px 20px;
-            }
-
-            .header h1 {
-                font-size: 24px;
-            }
-
-            .content {
-                padding: 30px 20px;
-            }
-
-            .features {
-                grid-template-columns: 1fr;
-            }
-
-            .info-card {
-                padding: 16px;
-            }
-
-            .btn-primary {
-                padding: 16px;
-                font-size: 15px;
-            }
-
-            .feature {
-                padding: 16px 10px;
-            }
-        }
-
-        @media (min-width: 768px) {
-            .container {
-                max-width: 520px;
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-
-        @media (prefers-color-scheme: dark) {
-            body {
-                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            }
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>SmartStudy Portal</title>
+  <meta name="theme-color" content="#2b6cb0" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%232b6cb0'/%3E%3Ctext x='50' y='57' font-size='42' text-anchor='middle' fill='white' font-family='Arial'%3ESS%3C/text%3E%3C/svg%3E" />
+  <!-- Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- Optional lazy OCR (only loaded when user enables OCR) -->
+  <style>
+    :root{
+      --primary:#2b6cb0; --accent:#2c5282; --bg:#f7fafc; --card:#ffffff; --muted:#556; --radius:12px;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      -webkit-font-smoothing:antialiased;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:linear-gradient(180deg,var(--bg),#e6eef8);color:#0f172a;min-height:100vh;-webkit-tap-highlight-color:transparent}
+    header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card);box-shadow:0 6px 18px rgba(44,82,130,0.06);position:sticky;top:0;z-index:20}
+    .logo{width:46px;height:46px;border-radius:10px;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;flex:0 0 46px}
+    .title{font-size:18px;font-weight:700}
+    .container{max-width:1100px;margin:18px auto;padding:0 14px}
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:16px}
+    .card{background:var(--card);border-radius:var(--radius);padding:14px;box-shadow:0 6px 18px rgba(11,22,39,0.04)}
+    .launcher-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .tile{background:linear-gradient(180deg,#fff,#f3f8ff);border-radius:10px;padding:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:84px;cursor:pointer;border:1px solid rgba(44,82,130,0.06);user-select:none}
+    .tile img{width:36px;height:36px;border-radius:6px;object-fit:cover}
+    .tile .label{font-size:13px;color:var(--muted);text-align:center;word-break:break-word}
+    .controls{display:flex;gap:8px;align-items:center}
+    button{background:var(--primary);color:#fff;border:none;padding:8px 10px;border-radius:10px;font-weight:600;cursor:pointer}
+    .muted-btn{background:transparent;color:var(--accent);border:1px solid rgba(44,82,130,0.08)}
+    .small{font-size:13px;padding:6px 8px}
+    .section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+    input[type=text],textarea,select{width:100%;padding:10px;border-radius:10px;border:1px solid #e2e8f0;font-size:14px}
+    .tools-list{display:flex;flex-direction:column;gap:8px}
+    .dropzone{border:2px dashed rgba(44,82,130,0.08);padding:12px;border-radius:10px;text-align:center;color:var(--muted);background:linear-gradient(180deg,rgba(255,255,255,0.6),transparent)}
+    .thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .thumb{width:92px;height:120px;border-radius:10px;border:1px solid rgba(11,22,39,0.04);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px;position:relative;background:#fff}
+    .thumb img{max-width:84px;max-height:72px;border-radius:6px;object-fit:cover}
+    .thumb .tlabel{font-size:12px;color:var(--muted);margin-top:6px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:84px}
+    .thumb .remove{position:absolute;top:6px;right:6px;background:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(44,82,130,0.06);cursor:pointer}
+    .notes{min-height:140px}
+    footer{max-width:1100px;margin:18px auto;padding:10px 14px;color:var(--muted);font-size:13px}
+    .hint{font-size:13px;color:var(--muted)}
+    /* Mobile friendliness */
+    @media(max-width:980px){.grid{grid-template-columns:1fr;}.launcher-grid{grid-template-columns:repeat(3,1fr)}.card{padding:12px}}
+    @media(max-width:520px){.launcher-grid{grid-template-columns:repeat(2,1fr)}header{padding:10px}}
+  </style>
 </head>
 <body>
-    <div class="animated-bg">
-        <div class="circle"></div>
-        <div class="circle"></div>
-        <div class="circle"></div>
+  <header>
+    <div class="logo">SS</div>
+    <div style="flex:0 1 auto">
+      <div class="title">SmartStudy Portal</div>
+      <div style="font-size:12px;color:var(--muted)">Multi‑App Launcher • Document Converter • Student Toolkit</div>
+    </div>
+    <div style="flex:1"></div>
+    <div class="controls">
+      <button id="addTileBtn" class="small muted-btn">+ Shortcut</button>
+      <button id="openConverter" class="small">Converter</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="grid">
+      <section class="card" aria-labelledby="launcher-heading">
+        <div class="section-title"><h3 id="launcher-heading">Launcher</h3><div class="hint">Tap to open • Long‑press to edit • Drag to reorder</div></div>
+        <div class="launcher-grid" id="launcherGrid" role="list">
+          <!-- tiles -->
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+          <button id="editMode" class="small muted-btn">Reorder Mode</button>
+          <button id="resetTiles" class="small muted-btn">Reset</button>
+        </div>
+      </section>
+
+      <aside class="card" aria-labelledby="tools-heading">
+        <div class="section-title"><h3 id="tools-heading">Quick Tools</h3><div class="hint">Handy study helpers</div></div>
+        <div class="tools-list">
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button id="openNotes" class="small muted-btn">Notes</button><button id="openTodo" class="small muted-btn">To‑Do</button><button id="openTimetable" class="small muted-btn">Timetable</button></div>
+          <div style="display:flex;gap:8px;margin-top:8px"><button id="openCalc" class="small muted-btn">Calculator</button><button id="exportConfig" class="small">Export</button><button id="importConfig" class="small muted-btn">Import</button></div>
+          <div style="margin-top:10px"><label class="hint"><input type="checkbox" id="enableOCR"> Enable OCR (lazy-load heavy library)</label></div>
+        </div>
+      </aside>
     </div>
 
-    <div class="container">
-        <div class="header">
-            <div class="logo-container">
-                <div class="logo">O</div>
-            </div>
-            <h1>Oracle Agent</h1>
-            <p>Fusion Applications Gateway</p>
+    <div style="height:16px"></div>
+
+    <section class="card" id="converterCard" aria-labelledby="converter-heading">
+      <div class="section-title"><h3 id="converter-heading">Document Converter</h3>
+        <div style="display:flex;gap:8px">
+          <button data-tab="images" class="tabBtn small muted-btn">Images → PDF</button>
+          <button data-tab="text" class="tabBtn small muted-btn">Text → PDF</button>
+          <button data-tab="html" class="tabBtn small muted-btn">HTML → PDF</button>
+          <button data-tab="merge" class="tabBtn small muted-btn">Merge PDFs</button>
         </div>
+      </div>
 
-        <div class="content">
-            <div class="offline-indicator" id="offlineIndicator">
-                ⚠️ No internet connection. Please check your network.
-            </div>
-
-            <div class="status-indicator" id="statusIndicator">
-                <span class="status-dot"></span>
-                <span id="statusText">System Online</span>
-            </div>
-
-            <div class="session-info">
-                <span>🕒</span>
-                <span id="sessionTime">Session active: 00:00</span>
-            </div>
-
-            <div class="info-cards">
-                <div class="info-card" onclick="copyToClipboard('US6 Oracle Cloud')">
-                    <div class="info-card-title">
-                        <span>🌐</span>
-                        <span>Environment</span>
-                    </div>
-                    <div class="info-card-value">US6 Oracle Cloud</div>
-                </div>
-                <div class="info-card" onclick="showToast('SSL/TLS 1.3 with AES-256-GCM encryption')">
-                    <div class="info-card-title">
-                        <span>🔒</span>
-                        <span>Security</span>
-                    </div>
-                    <div class="info-card-value">SSL/TLS Encrypted</div>
-                </div>
-                <div class="info-card" onclick="checkLatency()">
-                    <div class="info-card-title">
-                        <span>⚡</span>
-                        <span>Connection</span>
-                    </div>
-                    <div class="info-card-value" id="connectionStatus">Direct Gateway</div>
-                </div>
-                <div class="info-card" onclick="showToast('Last login: ' + new Date().toLocaleString())">
-                    <div class="info-card-title">
-                        <span>👤</span>
-                        <span>Last Access</span>
-                    </div>
-                    <div class="info-card-value" id="lastAccess">Just now</div>
-                </div>
-            </div>
-
-            <button class="btn-primary" id="launchBtn">
-                <div class="btn-text">
-                    <span>Launch Oracle Fusion Apps</span>
-                    <div class="loading"></div>
-                </div>
-            </button>
-
-            <div class="security-badge">
-                <span>🛡️</span>
-                <span>Protected by enterprise-grade security</span>
-            </div>
-
-            <div class="features">
-                <div class="feature" onclick="showToast('Optimized for fast loading')">
-                    <div class="feature-icon">🚀</div>
-                    <div class="feature-text">Fast Access</div>
-                </div>
-                <div class="feature" onclick="showToast('Multi-factor authentication enabled')">
-                    <div class="feature-icon">🔐</div>
-                    <div class="feature-text">Secure Login</div>
-                </div>
-                <div class="feature" onclick="showToast('Works on iOS, Android, Web')">
-                    <div class="feature-icon">📱</div>
-                    <div class="feature-text">Multi-Platform</div>
-                </div>
-                <div class="feature" onclick="showToast('Access all Oracle Fusion modules')">
-                    <div class="feature-icon">⚙️</div>
-                    <div class="feature-text">Full Features</div>
-                </div>
-            </div>
+      <div id="panelImages" class="panel">
+        <div class="dropzone" id="imageDrop">Drop images here or <label style="color:var(--accent);cursor:pointer"><input id="imageInput" type="file" accept="image/*" multiple style="display:none">choose files</label></div>
+        <div class="thumbs" id="thumbs" aria-live="polite"></div>
+        <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <label style="display:flex;align-items:center;gap:6px">Quality<select id="imgQuality"><option value="0.9">High</option><option value="0.7">Medium</option><option value="0.5">Small</option></select></label>
+          <label>Filename: <input id="pdfName" type="text" value="smartstudy_document" style="width:180px"></label>
+          <button id="makePdf" class="small">Create PDF</button>
+          <button id="clearImages" class="small muted-btn">Clear</button>
         </div>
+      </div>
 
-        <div class="footer">
-            <div class="footer-text">© 2024 Oracle Corporation. All rights reserved.</div>
-            <div class="developer">Developed by Subash Weerasinghe</div>
-            <div class="quick-links">
-                <a class="quick-link" onclick="showToast('Privacy Policy - Your data is protected')">Privacy</a>
-                <a class="quick-link" onclick="showToast('Terms of Service - Enterprise agreement')">Terms</a>
-                <a class="quick-link" onclick="showToast('Support: support@oracle.com')">Support</a>
-                <a class="quick-link" onclick="clearCache()">Clear Cache</a>
-            </div>
+      <div id="panelText" class="panel" style="display:none;margin-top:12px">
+        <textarea id="textInput" class="notes" placeholder="Paste notes or type assignment text here"></textarea>
+        <div style="margin-top:8px;display:flex;gap:8px;align-items:center"><input id="textPdfName" type="text" value="notes_document"><button id="textToPdf" class="small">Save as PDF</button></div>
+      </div>
+
+      <div id="panelHtml" class="panel" style="display:none;margin-top:12px">
+        <div class="hint">Paste a simple HTML fragment or note; we render and snapshot it.</div>
+        <textarea id="htmlInput" class="notes" placeholder="Paste or write HTML (simple) here"></textarea>
+        <div style="margin-top:8px;display:flex;gap:8px;align-items:center"><input id="htmlPdfName" type="text" value="page_snapshot"><button id="htmlToPdf" class="small">Export to PDF</button></div>
+      </div>
+
+      <div id="panelMerge" class="panel" style="display:none;margin-top:12px">
+        <div class="hint">Select multiple PDF files to merge client-side.</div>
+        <input id="mergeInput" type="file" accept="application/pdf" multiple>
+        <div style="margin-top:8px;display:flex;gap:8px;align-items:center"><input id="mergePdfName" type="text" value="merged_document"><button id="mergePdfsBtn" class="small">Merge PDFs</button></div>
+      </div>
+
+    </section>
+
+    <div style="height:16px"></div>
+
+    <div class="card">
+      <div class="section-title"><h3>Extras</h3><div class="hint">Notes • To‑Do • Timetable</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <div style="font-weight:700;margin-bottom:8px">Notes</div>
+          <textarea id="notesArea" class="notes" placeholder="Quick class notes — saved locally"></textarea>
         </div>
+        <div>
+          <div style="font-weight:700;margin-bottom:8px">To‑Do (assignments)</div>
+          <div style="display:flex;gap:8px;margin-bottom:8px"><input id="todoInput" type="text" placeholder="Add assignment"><button id="addTodo" class="small">Add</button></div>
+          <div id="todoList" style="min-height:120px"></div>
+        </div>
+      </div>
     </div>
 
-    <div class="toast" id="toast"></div>
+  </main>
 
-    <script>
-        const launchBtn = document.getElementById('launchBtn');
-        const toast = document.getElementById('toast');
-        const offlineIndicator = document.getElementById('offlineIndicator');
-        const ORACLE_URL = 'https://egmh.login.us6.oraclecloud.com';
-        let sessionStartTime = Date.now();
-        let launchAttempts = 0;
-        const MAX_ATTEMPTS = 3;
+  <footer>Made with ♥ for students — SmartStudy Portal. Data stays on your device. Convert to an APK using Median or any WebView wrapper.</footer>
 
-        // Session timer
-        function updateSessionTime() {
-            const elapsed = Math.floor((Date.now() - sessionStartTime) / 1000);
-            const minutes = Math.floor(elapsed / 60);
-            const seconds = elapsed % 60;
-            document.getElementById('sessionTime').textContent = 
-                `Session active: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        }
-        setInterval(updateSessionTime, 1000);
+  <script>
+  (async function(){
+    // Keys
+    const KEY_TILES='ss_tiles_v2'; const KEY_NOTES='ss_notes_v2'; const KEY_TODO='ss_todo_v2';
 
-        // Enhanced launch with security checks
-        launchBtn.addEventListener('click', function() {
-            if (!navigator.onLine) {
-                showToast('❌ No internet connection');
-                return;
-            }
+    // Defaults
+    const defaultTiles = [
+      {id:1,label:'Google',url:'https://www.google.com',icon:'https://www.google.com/favicon.ico'},
+      {id:2,label:'Classroom',url:'https://classroom.google.com',icon:'https://classroom.google.com/favicon.ico'},
+      {id:3,label:'Drive',url:'https://drive.google.com',icon:'https://drive.google.com/favicon.ico'},
+      {id:4,label:'YouTube',url:'https://www.youtube.com',icon:'https://www.youtube.com/favicon.ico'},
+      {id:5,label:'ChatGPT',url:'https://chat.openai.com',icon:'https://chat.openai.com/favicon.ico'},
+      {id:6,label:'Wikipedia',url:'https://www.wikipedia.org',icon:'https://www.wikipedia.org/static/favicon/wikipedia.ico'},
+    ];
 
-            if (launchAttempts >= MAX_ATTEMPTS) {
-                showToast('⚠️ Too many attempts. Please wait.');
-                setTimeout(() => { launchAttempts = 0; }, 30000);
-                return;
-            }
+    // DOM
+    const byId=id=>document.getElementById(id);
+    const grid=byId('launcherGrid');
 
-            launchAttempts++;
-            this.classList.add('loading');
-            this.disabled = true;
-            
-            // Security check and redirect
-            setTimeout(() => {
-                try {
-                    // Log access attempt (in production, send to server)
-                    console.log('Access attempt:', new Date().toISOString());
-                    window.location.href = ORACLE_URL;
-                } catch (error) {
-                    showToast('❌ Launch failed. Please try again.');
-                    this.classList.remove('loading');
-                    this.disabled = false;
-                }
-            }, 1200);
-        });
+    // storage helpers
+    const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+    const load=(k,def)=>{const v=localStorage.getItem(k);return v?JSON.parse(v):def};
 
-        function showToast(message) {
-            toast.textContent = message;
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
+    let tiles = load(KEY_TILES, defaultTiles.slice());
+    let reorderMode=false;
 
-        // Enhanced connection monitoring
-        function checkConnection() {
-            const indicator = document.getElementById('statusIndicator');
-            const statusText = document.getElementById('statusText');
-            
-            if (navigator.onLine) {
-                indicator.style.background = '#d4edda';
-                indicator.style.color = '#155724';
-                statusText.textContent = 'System Online';
-                indicator.querySelector('.status-dot').style.background = '#28a745';
-                offlineIndicator.style.display = 'none';
-                launchBtn.disabled = false;
-            } else {
-                indicator.style.background = '#f8d7da';
-                indicator.style.color = '#721c24';
-                statusText.textContent = 'No Connection';
-                indicator.querySelector('.status-dot').style.background = '#dc3545';
-                offlineIndicator.style.display = 'block';
-                launchBtn.disabled = true;
-            }
-        }
+    // render
+    function renderTiles(){grid.innerHTML='';tiles.forEach((t,i)=>{
+      const el=document.createElement('div');el.className='tile';el.draggable=true;el.dataset.id=t.id;el.role='listitem';
+      const iconSrc = t.icon || 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\'%3E%3Cpath fill=\'%232c5282\' d=\'M12 2L2 7v6c0 5 5 9 10 9s10-4 10-9V7l-10-5z\'/%3E%3C/svg%3E';
+      el.innerHTML=`<div style="width:100%;display:flex;align-items:center;justify-content:center"><img src="${iconSrc}" alt="${escapeHtml(t.label)} icon"></div><div class="label">${escapeHtml(t.label)}</div>`;
 
-        // Check latency
-        async function checkLatency() {
-            const start = performance.now();
-            try {
-                await fetch(ORACLE_URL, { method: 'HEAD', mode: 'no-cors' });
-                const latency = Math.round(performance.now() - start);
-                document.getElementById('connectionStatus').textContent = `${latency}ms latency`;
-                showToast(`✅ Connection speed: ${latency}ms`);
-            } catch (error) {
-                showToast('❌ Unable to check connection speed');
-            }
-        }
+      // click
+      el.addEventListener('click',()=>{if(reorderMode) return; try{window.open(t.url,'_self')}catch(e){window.location.href=t.url}});
 
-        // Copy to clipboard
-        function copyToClipboard(text) {
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(text).then(() => {
-                    showToast('✅ Copied to clipboard');
-                });
-            } else {
-                showToast('📋 ' + text);
-            }
-        }
+      // long-press (touch friendly)
+      let longpressTimer;
+      el.addEventListener('pointerdown',e=>{longpressTimer=setTimeout(()=>{editTile(i)},600)});
+      el.addEventListener('pointerup',()=>clearTimeout(longpressTimer));
+      el.addEventListener('pointerleave',()=>clearTimeout(longpressTimer));
 
-        // Clear cache
-        function clearCache() {
-            if ('caches' in window) {
-                caches.keys().then(names => {
-                    names.forEach(name => caches.delete(name));
-                });
-            }
-            sessionStartTime = Date.now();
-            launchAttempts = 0;
-            showToast('✅ Cache cleared successfully');
-        }
+      // drag handlers
+      el.addEventListener('dragstart',ev=>{ev.dataTransfer.setData('text/plain',i);el.style.opacity='0.6'});
+      el.addEventListener('dragend',()=>{el.style.opacity=''});
 
-        // Event listeners
-        window.addEventListener('online', () => {
-            checkConnection();
-            showToast('✅ Connection restored');
-        });
-        
-        window.addEventListener('offline', () => {
-            checkConnection();
-            showToast('❌ Connection lost');
-        });
-        
-        checkConnection();
+      grid.appendChild(el);
+    });}
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                launchBtn.click();
-            }
-            if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
-                e.preventDefault();
-                checkLatency();
-            }
-        });
+    function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 
-        // Prevent context menu for security
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        });
+    renderTiles();
 
-        // Enhanced touch feedback
-        if ('ontouchstart' in window) {
-            document.querySelectorAll('.info-card, .feature, .quick-link, .btn-primary').forEach(el => {
-                el.addEventListener('touchstart', function() {
-                    this.style.opacity = '0.7';
-                }, { passive: true });
-                el.addEventListener('touchend', function() {
-                    this.style.opacity = '1';
-                }, { passive: true });
-            });
-        }
+    // Add / Edit / Reset
+    byId('addTileBtn').addEventListener('click',()=>{
+      const label=prompt('Shortcut label'); if(!label) return; const url=prompt('Full URL (https://...)', 'https://'); if(!url) return; const icon=prompt('Icon URL (optional)'); const id=Date.now(); tiles.push({id,label,url,icon}); save(KEY_TILES,tiles); renderTiles();
+    });
+    byId('resetTiles').addEventListener('click',()=>{if(confirm('Reset launcher to defaults?')){tiles=defaultTiles.slice();save(KEY_TILES,tiles);renderTiles()}});
+    byId('editMode').addEventListener('click',()=>{reorderMode=!reorderMode;byId('editMode').textContent=reorderMode? 'Done' : 'Reorder Mode';grid.style.cursor=reorderMode? 'grabbing':'default'});
 
-        // Update last access
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('lastAccess').textContent = now.toLocaleTimeString();
-        }, 60000);
+    function editTile(index){const t=tiles[index];if(!t) return;const label=prompt('Label',t.label); if(label!=null) t.label=label; const url=prompt('URL',t.url); if(url!=null) t.url=url; const icon=prompt('Icon URL',t.icon||''); if(icon!=null) t.icon=icon; save(KEY_TILES,tiles); renderTiles();}
 
-        // Performance monitoring
-        if ('PerformanceObserver' in window) {
-            const observer = new PerformanceObserver((list) => {
-                for (const entry of list.getEntries()) {
-                    if (entry.duration > 100) {
-                        console.warn('Slow operation detected:', entry.name, entry.duration);
-                    }
-                }
-            });
-            observer.observe({ entryTypes: ['measure'] });
-        }
+    // Drag reordering (grid-level)
+    grid.addEventListener('dragover',e=>e.preventDefault());
+    grid.addEventListener('drop',e=>{
+      e.preventDefault();const fromIndex = +e.dataTransfer.getData('text/plain');
+      // find drop index
+      const nodes = Array.from(grid.children); let toIndex = nodes.length-1;
+      for(let i=0;i<nodes.length;i++){const r=nodes[i].getBoundingClientRect(); if(e.clientY < r.top + r.height/2){toIndex = i; break}}
+      // move
+      const [item] = tiles.splice(fromIndex,1); tiles.splice(toIndex,0,item); save(KEY_TILES,tiles); renderTiles();
+    });
 
-        // Service Worker registration for offline capability
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('data:text/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgZXZlbnQgPT4gc2VsZi5za2lwV2FpdGluZygpKTs=')
-                    .catch(() => console.log('Service worker not available'));
-            });
-        }
+    // --- Converter: images -> PDF with safe image handling ---
+    const imageInput=byId('imageInput'),thumbs=byId('thumbs'),imageDrop=byId('imageDrop'),pdfName=byId('pdfName'),imgQuality=byId('imgQuality');
+    let images = load('ss_images_v1', []);
 
-        // Prevent screenshot on mobile (Android)
-        if (navigator.userAgent.match(/Android/i)) {
-            document.addEventListener('visibilitychange', function() {
-                if (document.hidden) {
-                    document.body.style.filter = 'blur(10px)';
-                } else {
-                    document.body.style.filter = 'none';
-                }
-            });
-        }
+    function saveImages(){localStorage.setItem('ss_images_v1', JSON.stringify(images.slice(0,50)));}
 
-        // Initialize
-        console.log('%cOracle Agent Gateway', 'color: #C74634; font-size: 20px; font-weight: bold;');
-        console.log('%cSecure connection established', 'color: #28a745;');
-    </script>
+    function renderThumbs(){thumbs.innerHTML='';images.forEach((it,idx)=>{
+      const el=document.createElement('div');el.className='thumb';el.dataset.idx=idx;
+      el.innerHTML=`<div class="remove" title="Remove">×</div><img alt="image ${idx}"><div class="tlabel">${escapeHtml(it.name)}</div>`;
+      const imgEl=el.querySelector('img');
+      imgEl.src = it.data; imgEl.onerror = ()=>{imgEl.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\'%3E%3Cpath fill=\'%232c5282\' d=\'M12 2L2 7v6c0 5 5 9 10 9s10-4 10-9V7l-10-5z\'/%3E%3C/svg%3E'};
+      el.querySelector('.remove').addEventListener('click',()=>{images.splice(idx,1);saveImages();renderThumbs()});
+      // drag reorder within thumbs (mobile friendly)
+      el.draggable=true; el.addEventListener('dragstart',ev=>ev.dataTransfer.setData('text/plain',idx));
+      el.addEventListener('dragover',e=>e.preventDefault());
+      el.addEventListener('drop',e=>{e.preventDefault();const from=+e.dataTransfer.getData('text/plain');const to=+el.dataset.idx;const [m]=images.splice(from,1);images.splice(to,0,m);saveImages();renderThumbs()});
+      thumbs.appendChild(el);
+    })}
+    renderThumbs();
+
+    // Limit and compress when adding images to avoid OOM on old Android devices
+    function addFiles(files){const maxFiles = 30; const remaining = Math.max(0, maxFiles - images.length); const list = Array.from(files).slice(0,remaining);
+      list.forEach(file=>{ if(!file.type.startsWith('image')) return; const reader=new FileReader(); reader.onerror=()=>alert('Failed to read '+file.name);
+        reader.onload = async (e)=>{
+          try{ // compress by drawing to canvas
+            const dataUrl = e.target.result;
+            const img = await loadImageSafe(dataUrl);
+            const maxW = 1200; const maxH = 1600; let w=img.width, h=img.height; const ratio = Math.min(1, Math.min(maxW/w, maxH/h)); w = Math.round(w*ratio); h = Math.round(h*ratio);
+            const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h; const ctx = canvas.getContext('2d'); ctx.drawImage(img,0,0,w,h);
+            const quality = parseFloat(imgQuality.value) || 0.8; const compressed = canvas.toDataURL('image/jpeg', quality);
+            images.push({name:file.name, data:compressed}); saveImages(); renderThumbs();
+          }catch(err){console.error('image add err',err);alert('Error processing image '+file.name)}
+        };
+        reader.readAsDataURL(file);
+      });}
+
+    imageInput.addEventListener('change',e=>addFiles(e.target.files));
+    imageDrop.addEventListener('dragover',e=>{e.preventDefault();imageDrop.style.borderColor='rgba(44,82,130,0.18)'});
+    imageDrop.addEventListener('dragleave',()=>{imageDrop.style.borderColor=''});
+    imageDrop.addEventListener('drop',e=>{e.preventDefault();imageDrop.style.borderColor='';addFiles(e.dataTransfer.files)});
+    byId('clearImages').addEventListener('click',()=>{images=[];saveImages();renderThumbs()});
+
+    // Create PDF safely using jsPDF but with image compression and page breaks
+    async function createPdfFromImages(){if(images.length===0){alert('Add images first');return}
+      const { jsPDF } = window.jspdf; const doc = new jsPDF({unit:'px',format:'a4'});
+      const maxW = 595; const maxH = 842; for(let i=0;i<images.length;i++){
+        const item = images[i]; try{
+          const img = await loadImageSafe(item.data);
+          let iw = img.width, ih = img.height; const scale = Math.min(maxW/iw, maxH/ih, 1); const w = iw*scale; const h = ih*scale;
+          if(i>0) doc.addPage();
+          doc.addImage(item.data,'JPEG', (maxW-w)/2, 40, w, h);
+          doc.setFontSize(10); doc.setTextColor(120); doc.text(`${i+1} / ${images.length}`, 40, 820);
+        }catch(err){console.warn('Skipping image',item.name,err)}
+      }
+      const name = (pdfName.value || 'smartstudy_document') + '.pdf'; doc.save(name);
+    }
+
+    byId('makePdf').addEventListener('click',createPdfFromImages);
+
+    // helper to load image with cross-origin and error handling
+    function loadImageSafe(src){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error('image load error'));i.src=src})}
+
+    // Text -> PDF (improved pagination and font sizing)
+    byId('textToPdf').addEventListener('click',()=>{
+      const text = byId('textInput').value.trim(); if(!text){alert('Write or paste some text first');return}
+      const { jsPDF } = window.jspdf; const doc = new jsPDF(); const margin=20; const pageW=doc.internal.pageSize.getWidth()-margin*2; doc.setFontSize(12);
+      const lines = doc.splitTextToSize(text, pageW); let cursor=margin+10; const lineHeight=14;
+      for(let i=0;i<lines.length;i++){
+        if(cursor + lineHeight > doc.internal.pageSize.getHeight()-margin){doc.addPage(); cursor = margin+10}
+        doc.text(lines[i], margin, cursor); cursor += lineHeight;
+      }
+      doc.save((byId('textPdfName').value||'notes')+'.pdf');
+    });
+
+    // HTML -> PDF using html2canvas with cleanup
+    byId('htmlToPdf').addEventListener('click',async ()=>{
+      const html = byId('htmlInput').value.trim(); if(!html){alert('Paste some HTML first');return}
+      const wrap = document.createElement('div');wrap.style.padding='20px';wrap.style.background='#fff';wrap.style.maxWidth='800px';wrap.innerHTML = html; document.body.appendChild(wrap);
+      try{const canvas = await html2canvas(wrap, {scale:1.6}); const img = canvas.toDataURL('image/jpeg',0.9); const { jsPDF } = window.jspdf; const doc = new jsPDF({unit:'px',format:'a4'});
+        const iw=canvas.width, ih=canvas.height; const maxW=595, maxH=842; const scale=Math.min(maxW/iw, maxH/ih); const w=iw*scale, h=ih*scale; doc.addImage(img,'JPEG',(maxW-w)/2,20,w,h); doc.save((byId('htmlPdfName').value||'page')+'.pdf');
+      }catch(err){console.error(err);alert('Failed to export HTML to PDF') } finally{document.body.removeChild(wrap)}
+    });
+
+    // Merge PDFs client-side (using simple concatenation via ArrayBuffer + PDFLib?)
+    // We will use a lightweight approach: if PDFLib present, use it; otherwise simple fallback to download selected files individually
+    async function mergePdfs(files){ if(files.length===0) return alert('Pick PDF files');
+      // try to use PDFLib if available
+      if(window.PDFLib){ try{
+        const { PDFDocument } = PDFLib; const mergedDoc = await PDFDocument.create();
+        for(const f of files){ const arr = await f.arrayBuffer(); const donor = await PDFDocument.load(arr); const copied = await mergedDoc.copyPages(donor, donor.getPageIndices()); copied.forEach(p=>mergedDoc.addPage(p)); }
+        const merged = await mergedDoc.save(); const blob = new Blob([merged],{type:'application/pdf'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=(byId('mergePdfName').value||'merged')+'.pdf'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); return;
+      }catch(err){console.error(err)} }
+      // fallback: simply prompt to download first selected (no merge)
+      alert('PDF merge requires a merging library (PDFLib). In this build, either include PDFLib or merge externally.');
+    }
+    byId('mergePdfsBtn').addEventListener('click',()=>{const f=byId('mergeInput').files; mergePdfs(Array.from(f))});
+
+    // Extras: Notes and ToDo
+    const notesArea=byId('notesArea'); notesArea.value = load(KEY_NOTES,''); notesArea.addEventListener('input',()=>save(KEY_NOTES,notesArea.value));
+    let todos = load(KEY_TODO,[]);
+    function renderTodos(){const list=byId('todoList'); list.innerHTML=''; todos.forEach((t,i)=>{const r=document.createElement('div'); r.style.display='flex'; r.style.justifyContent='space-between'; r.style.alignItems='center'; r.style.padding='6px 0'; r.innerHTML=`<div style="display:flex;gap:8px;align-items:center"><input type="checkbox" ${t.done? 'checked':''} data-i="${i}"><div style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${escapeHtml(t.text)}</div></div><div><button data-i="${i}" class="small muted-btn">Del</button></div>`; r.querySelector('input').addEventListener('change',ev=>{todos[i].done=ev.target.checked; save(KEY_TODO,todos); renderTodos()}); r.querySelector('button').addEventListener('click',()=>{todos.splice(i,1); save(KEY_TODO,todos); renderTodos()}); list.appendChild(r)})}
+    renderTodos(); byId('addTodo').addEventListener('click',()=>{const v=byId('todoInput').value.trim(); if(!v) return; todos.push({text:v,done:false}); save(KEY_TODO,todos); byId('todoInput').value=''; renderTodos();});
+
+    // Export / Import
+    byId('exportConfig').addEventListener('click',()=>{const payload={tiles,notes:notesArea.value,todos,images}; const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='smartstudy_export.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url)});
+    byId('importConfig').addEventListener('click',()=>{const input=document.createElement('input'); input.type='file'; input.accept='application/json'; input.addEventListener('change',ev=>{const f=ev.target.files[0]; const r=new FileReader(); r.onload=e=>{try{const obj=JSON.parse(e.target.result); if(obj.tiles) tiles=obj.tiles; if(obj.notes) notesArea.value=obj.notes; if(obj.todos) todos=obj.todos; if(obj.images) { images = obj.images.slice(0,50); saveImages(); } save(KEY_TILES,tiles); save(KEY_NOTES,notesArea.value); save(KEY_TODO,todos); renderTiles(); renderTodos(); renderThumbs(); alert('Imported') }catch(err){alert('Invalid file')} }; r.readAsText(f)}); input.click()});
+
+    // Quick links
+    byId('openNotes').addEventListener('click',()=>{notesArea.focus(); window.scrollTo({top:notesArea.getBoundingClientRect().top + window.scrollY - 80, behavior:'smooth'})});
+    byId('openTodo').addEventListener('click',()=>{window.scrollTo({top:byId('todoList').getBoundingClientRect().top + window.scrollY - 80, behavior:'smooth'})});
+    byId('openConverter').addEventListener('click',()=>{window.location.hash='converter'; window.scrollTo({top:byId('converterCard').offsetTop-60, behavior:'smooth'})});
+    byId('openTimetable').addEventListener('click',()=>{alert('Timetable coming soon — we can add editable timetable & class reminders.')});
+    byId('openCalc').addEventListener('click',()=>{const q=prompt('Enter expression to calculate (e.g. 12/3 + 5*2)'); if(q!==null) try{alert('Result: '+eval(q))}catch(e){alert('Invalid expression')}});
+
+    // Export saved state before unload
+    window.addEventListener('beforeunload',()=>{save(KEY_TILES,tiles); save(KEY_NOTES,notesArea.value); save(KEY_TODO,todos); saveImages()});
+    if(!localStorage.getItem(KEY_TILES)) save(KEY_TILES,tiles);
+
+    // Tab switching
+    const tabs = document.querySelectorAll('.tabBtn'); tabs.forEach(tb=>tb.addEventListener('click',()=>{const name=tb.dataset.tab; document.querySelectorAll('.panel').forEach(p=>p.style.display='none'); document.getElementById('panel'+capitalize(name)).style.display='block'})); function capitalize(s){return s.charAt(0).toUpperCase()+s.slice(1)}
+
+    // OCR lazy-load (Tesseract) when user enables
+    byId('enableOCR').addEventListener('change',async (e)=>{
+      if(e.target.checked){ if(!window.Tesseract){ const script=document.createElement('script'); script.src='https://cdn.jsdelivr.net/npm/tesseract.js@v2.1.5/dist/tesseract.min.js'; document.head.appendChild(script); script.onload=()=>alert('OCR loaded — you can paste images and use third-party OCR actions (we can add OCR UI next).'); } }
+    });
+
+    // Utility: load external PDFLib lazily if user tries to merge PDFs
+    // (we don't load heavy libs until user chooses feature)
+
+    // small utility functions
+    function capitalizeFirst(s){return s.charAt(0).toUpperCase()+s.slice(1)}
+
+    // merge PDF import (lazy)
+    byId('mergeInput').addEventListener('change',async (e)=>{/* files selected */});
+
+    // keyboard shortcuts
+    window.addEventListener('keydown',(e)=>{if(e.key==='/' && (e.ctrlKey||e.metaKey)){e.preventDefault(); imageInput.click()}})
+
+  })();
+  </script>
 </body>
 </html>
